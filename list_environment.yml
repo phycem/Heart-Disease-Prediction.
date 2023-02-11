@@ -4,4 +4,6 @@ dependencies:
   - scipy=1.7.1
   - seaborn=0.11.2
   - pip:
+    - ipython==8.10.0
     - matplotlib==3.5.3
+    - jupyter==1.0.0
