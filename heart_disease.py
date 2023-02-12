@@ -44,3 +44,9 @@ import plotly.graph_objects as go
 import tensorflow as tf
 
 import plotly.express as px
+
+def get_data():
+    data = pd.read_csv("data/heart_disease_dataset.csv")
+    return data
+df =get_data()
+print(df)
