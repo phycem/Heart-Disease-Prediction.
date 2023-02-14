@@ -48,8 +48,8 @@ import plotly.express as px
 def get_data():
     data = pd.read_csv("data/heart_disease_dataset.csv")
     data1=data.dropna(axis=0)
-    clean_data=data1.drop(["chol","fbs"],axis=1,inplace=True)
+    clean_data=data1.drop(["chol","fbs"],axis=1)
     return clean_data
 
 df=get_data()
-print(get_data())
+print(df)
