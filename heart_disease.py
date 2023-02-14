@@ -49,4 +49,5 @@ def get_data():
     data = pd.read_csv("data/heart_disease_dataset.csv")
     return data
 df =get_data()
+df=df.dropna(axis=0)
 print(df)
