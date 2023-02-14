@@ -52,4 +52,48 @@ def get_data():
     return clean_data
 
 df=get_data()
-print(df)
+
+
+#detecting and cleaning outliers
+
+#for resting blood pressure feature outliers
+winsorize_percentile_trtbps = (stats.percentileofscore(df["trtbps"],165))/100
+trtbps_winsorize = winsorize(df.trtbps,(0,(1-winsorize_percentile_trtbps)))
+df["trtbps_winsorize"]= trtbps_winsorize
+
+
+#for Thalach feature outliers
+def iqr(df, var):
+    q1 = np.quantile(df[var], 0.25)
+    q3 = np.quantile(df[var], 0.75)
+    diff = q3 - q1
+    lower_v = q1 - (1.5 * diff)
+    upper_v = q3 + (1.5 * diff)
+    return df[(df[var] < lower_v) | (df[var] > upper_v)]
+
+thalachh_out = iqr(df, "thalachh")
+a=thalachh_out.index[0]
+df= df.drop(a,axis=0)
+
+#for Oldpeak
+winsorize_percentile_oldpeak = (stats.percentileofscore(df["oldpeak"], 4)) / 100
+oldpeak_winsorize = winsorize(df.oldpeak, (0, (1 - winsorize_percentile_oldpeak)))
+df["oldpeak_winsorize"] = oldpeak_winsorize
+
+#drop column that less correlate
+df = df.drop(["trtbps", "oldpeak"], axis = 1)
+
+#Applying One hot encoding method to categorical variables
+numeric_var = ['age', 'trtbps', 'chol', 'thalachh', 'oldpeak']
+categoric_var = ['sex', 'cp', 'fbs', 'restecg', 'exng', 'slp', 'caa', 'thall', 'output']
+categoric_var.remove("fbs")
+df = pd.get_dummies(df, columns = categoric_var[:-1], drop_first = True)
+
+#Feature scaling with the RobustScaler method of continuous and numerical variables for ML models use
+final_dataset = df.copy()
+new_numeric_var = ["age", "thalachh", "trtbps_winsorize", "oldpeak_winsorize"]
+robust_scaler = RobustScaler()
+final_dataset[new_numeric_var] = robust_scaler.fit_transform(df[new_numeric_var])
+
+
+print(final_dataset)
